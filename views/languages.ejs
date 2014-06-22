@@ -1,0 +1,28 @@
+<div>
+<table>
+ <thead>
+  <tr>
+     <th>Continent</th>
+     <th>Country</th>
+	 <th>Language</th>
+	 <th>Population</th>
+	 <th>Official Language Use %</th>
+	 <th>Official Language Population Use</th>
+	 <th>&nbsp;</th>	 
+  </tr>
+ </thead>
+ <tbody>
+  <% for(var i=0; i<country.length; i++) { %>
+	<tr>
+     <td><%= country[i].continent %></td>
+     <td><%= country[i].name %></td>
+	 <td><%= country[i].language %></td>
+	 <td><%= country[i].population %></td>
+	 <td><%= country[i].percentage %></td>
+	 <td><%= country[i].population * country[i].percentage / 100 | 0 %></td>
+	 <td><a class="btn btn-xs" href='/country/:<%= country[i].code %>'>Details</a></td>
+    </tr>
+  <% } %>
+ </tbody>
+</table>
+</div>

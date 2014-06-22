@@ -1,0 +1,20 @@
+<div>
+<table>
+<thead>
+<tr>
+     <th>Language</th>
+     <th>Population Use</th>
+	 <th>Global Population % Use</th>	 
+  </tr>
+</thead>
+<tbody>
+ <% for(var i=0; i<data.length; i++) { %>
+<tr>
+     <th><%= data[i].language %></th>
+      <th><%= data[i].population  | 0 %></th>
+	 <th><%= Math.round(data[i].percentage *100)/100 %></th>	 
+  </tr>
+  <% } %>
+</tbody>
+</table>
+</div>
