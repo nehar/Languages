@@ -18,10 +18,19 @@ app.configure(function () {
 });
 
 app.get('/countries', function (req, res) {
-    var client = new pg.Client(connectionString);
-    client.connect();
+  var client = new pg.Client(connectionString);
+  client.connect(function(err) {
+    if(err) {
+      res.render("error", {
+      header: "Countries and languages",
+      });
+	  return console.error('Could not connect to postgres', err);
+    } 
     client.query("SELECT country.code, country.name, country.continent, country.population, countryLanguage.language, countryLanguage.isofficial, countryLanguage.percentage FROM countryLanguage  INNER JOIN country ON countryLanguage.countrycode = country.code WHERE isofficial = 'true' ORDER BY country.continent ASC, country.name ASC, countryLanguage.percentage DESC", function (err, result) {
-        if (result == undefined) {
+        if(err) {
+            return console.error('Error running query', err);
+        }
+		if (result == undefined) {
             console.log("No results for the query");
         } else {
             res.render("languages", {
@@ -31,14 +40,24 @@ app.get('/countries', function (req, res) {
         }
         client.end();
     });
+  });
 });
 
 app.get('/country/:countryCode', function (req, res) {
     var code = req.params.countryCode.substring(1);
     var client = new pg.Client(connectionString);
-    client.connect();
+    client.connect(function(err) {
+	if(err) {
+          res.render("error", {
+          header: "Countries and languages",
+          });
+          return console.error('Error running query', err);
+    }
     client.query("SELECT country.name, country.population, countryLanguage.language, countryLanguage.isofficial, countryLanguage.percentage FROM countryLanguage  INNER JOIN country ON countryLanguage.countrycode = country.code WHERE country.code = '" + code + "'", function (err, result) {
-        if (result == undefined) {
+		if(err) {
+            return console.error('Error running query', err);
+        }
+		if (result == undefined) {
             console.log("No results for the query");
         } else {
             res.render("country", {
@@ -48,13 +67,23 @@ app.get('/country/:countryCode', function (req, res) {
         }
         client.end();
     });
+  });
 });
 
 app.get('/groupedCountries', function (req, res) {
     var client = new pg.Client(connectionString);
-    client.connect();
+    client.connect(function(err) {
+	  if(err) {
+          res.render("error", {
+          header: "Countries and languages",
+          });
+          return console.error('Error running query', err);
+      }
     client.query("SELECT countryLanguage.language, sum(country.population * countryLanguage.percentage / 100) AS population, sum(country.population * countryLanguage.percentage / 100)/(SELECT sum(population) from country)*100 AS percentage  FROM countryLanguage  INNER JOIN country ON countryLanguage.countrycode = country.code GROUP BY countryLanguage.language ORDER BY population DESC, countryLanguage.language ASC", function (err, result) {
-        if (result == undefined) {
+		if(err) {
+            return console.error('Error running query', err);
+        }
+		if (result == undefined) {
             console.log("No results for the query");
         } else {
             res.render("groupedCountries", {
@@ -64,6 +93,7 @@ app.get('/groupedCountries', function (req, res) {
         }
         client.end();
     });
+  });
 });
 
 app.get('/', function (req, res) {
